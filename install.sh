@@ -172,8 +172,13 @@ else
     echo -e "${GREEN}  ✅ Project files downloaded.${NC}"
 fi
 
-# Make TUI executable
-chmod +x mc-tui.sh 2>/dev/null || true
+# Make mc command executable and install globally
+chmod +x mc.sh mc-tui.sh 2>/dev/null || true
+sudo cp mc.sh /usr/local/bin/mc 2>/dev/null || { 
+    mkdir -p "$HOME/.local/bin" 2>/dev/null
+    cp mc.sh "$HOME/.local/bin/mc" 2>/dev/null
+    echo "alias mc='$HOME/.local/bin/mc'" >> "$HOME/.bashrc" 2>/dev/null || true
+}
 
 # ============================================================
 # 3️⃣  SETUP DATA & BUILD
@@ -248,7 +253,10 @@ fi
 
 echo -e "${GREEN}\n  ✅ Panel ready at: http://localhost:3000${NC}"
 echo -e ""
-echo -e "${BOLD}${MAGENTA}  🎮  Terminal UI Manager:${NC}"
+echo -e "${BOLD}${MAGENTA}  🎮  Terminal Manager (like msr in 3x-ui):${NC}"
+echo -e "${CYAN}     mc${NC}"
+echo -e "${YELLOW}       Just type 'mc' anywhere in terminal!${NC}"
+echo -e ""
 echo -e "${CYAN}     bash mc-tui.sh${NC}"
 echo -e ""
 echo -e "${YELLOW}  💡 One-line install for future use:${NC}"
