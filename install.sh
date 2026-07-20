@@ -172,6 +172,9 @@ else
     echo -e "${GREEN}  ✅ Project files downloaded.${NC}"
 fi
 
+# Make TUI executable
+chmod +x mc-tui.sh 2>/dev/null || true
+
 # ============================================================
 # 3️⃣  SETUP DATA & BUILD
 # ============================================================
@@ -244,5 +247,9 @@ elif command -v open &> /dev/null; then
 fi
 
 echo -e "${GREEN}\n  ✅ Panel ready at: http://localhost:3000${NC}"
-echo -e "${YELLOW}  💡 Add this to your terminal for future use:${NC}"
+echo -e ""
+echo -e "${BOLD}${MAGENTA}  🎮  Terminal UI Manager:${NC}"
+echo -e "${CYAN}     bash mc-tui.sh${NC}"
+echo -e ""
+echo -e "${YELLOW}  💡 One-line install for future use:${NC}"
 echo -e "${CYAN}     bash <(curl -Ls https://raw.githubusercontent.com/AmiirDark1/test/master/install.sh)${NC}\n"
