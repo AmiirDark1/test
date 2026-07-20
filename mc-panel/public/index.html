@@ -1,0 +1,3577 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎮 Minecraft Server Panel-test-dark</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ==================== CSS RESET & BASE ==================== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #0d1117;
+        --bg2: #151b23;
+        --bg3: #1c2333;
+        --card: #1a2235;
+        --border: #30363d;
+        --text: #e6edf3;
+        --text2: #8b949e;
+        --primary: #58a6ff;
+        --primary-hover: #79c0ff;
+        --success: #3fb950;
+        --warning: #d29922;
+        --danger: #f85149;
+        --info: #58a6ff;
+        --gold: #ffa657;
+        --purple: #bc8cff;
+        --cyan: #56d4dd;
+        --sidebar-w: 240px;
+        --header-h: 56px;
+        --radius: 10px;
+        --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: "Vazirmatn", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--text2);
+      }
+
+      /* ==================== UTILITY ==================== */
+      .flex {
+        display: flex;
+      }
+      .flex-1 {
+        flex: 1;
+      }
+      .flex-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .gap-5 {
+        gap: 5px;
+      }
+      .gap-10 {
+        gap: 10px;
+      }
+      .gap-15 {
+        gap: 15px;
+      }
+      .mb-5 {
+        margin-bottom: 5px;
+      }
+      .mb-10 {
+        margin-bottom: 10px;
+      }
+      .mb-15 {
+        margin-bottom: 15px;
+      }
+      .mb-20 {
+        margin-bottom: 20px;
+      }
+      .mt-10 {
+        margin-top: 10px;
+      }
+      .mt-20 {
+        margin-top: 20px;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .text-muted {
+        color: var(--text2);
+        font-size: 0.9em;
+      }
+      .text-sm {
+        font-size: 0.85em;
+      }
+      .text-gold {
+        color: var(--gold);
+      }
+      .text-green {
+        color: var(--success);
+      }
+      .text-red {
+        color: var(--danger);
+      }
+      .nowrap {
+        white-space: nowrap;
+      }
+      .word-break {
+        word-break: break-all;
+      }
+      .truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      /* ==================== HEADER ==================== */
+      .header {
+        height: var(--header-h);
+        background: var(--bg2);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        gap: 12px;
+        z-index: 100;
+        flex-shrink: 0;
+      }
+      .header h1 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+      }
+      .server-status {
+        font-size: 0.75rem;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .server-status.online {
+        background: rgba(63, 185, 80, 0.15);
+        color: var(--success);
+        border: 1px solid rgba(63, 185, 80, 0.3);
+      }
+      .server-status.offline {
+        background: rgba(248, 81, 73, 0.15);
+        color: var(--danger);
+        border: 1px solid rgba(248, 81, 73, 0.3);
+      }
+      .hamburger {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 4px;
+      }
+
+      /* ==================== SIDEBAR ==================== */
+      .sidebar {
+        width: var(--sidebar-w);
+        background: var(--bg2);
+        border-left: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        overflow-y: auto;
+        transition: transform 0.3s;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        cursor: pointer;
+        border-right: 3px solid transparent;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+        color: var(--text2);
+      }
+      .nav-item:hover {
+        background: var(--bg3);
+        color: var(--text);
+      }
+      .nav-item.active {
+        background: var(--bg3);
+        border-right-color: var(--primary);
+        color: var(--primary);
+        font-weight: 600;
+      }
+      .nav-icon {
+        font-size: 1.2rem;
+      }
+
+      /* ==================== MAIN LAYOUT ==================== */
+      .app-layout {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+      .main-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+      }
+      .page-section {
+        display: none;
+      }
+      .page-section.active {
+        display: block;
+        animation: fadeIn 0.3s;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      /* ==================== CARDS ==================== */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow);
+      }
+      .card-header {
+        margin-bottom: 12px;
+      }
+      .card-header h3 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+      }
+      .card-grid.small-cards .card {
+        padding: 14px;
+        text-align: center;
+      }
+      .card-grid.small-cards .card h3 {
+        font-size: 0.85rem;
+        justify-content: center;
+      }
+      .stat-value {
+        font-size: 1.6rem;
+        font-weight: 900;
+        margin-top: 4px;
+      }
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--text2);
+      }
+      .stat-tps {
+        color: var(--cyan);
+      }
+      .stat-bans {
+        color: var(--danger);
+      }
+      .stat-ops {
+        color: var(--gold);
+      }
+
+      /* ==================== FORMS & BUTTONS ==================== */
+      .form-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+      }
+      .form-group {
+        flex: 1;
+        min-width: 120px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--text2);
+        margin-bottom: 4px;
+      }
+      .input,
+      select.input {
+        width: 100%;
+        padding: 10px 12px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.88rem;
+        transition: border 0.2s;
+      }
+      .input:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+      select.input {
+        cursor: pointer;
+      }
+      textarea.input {
+        resize: vertical;
+        min-height: 60px;
+      }
+      .form-hint {
+        font-size: 0.75rem;
+        color: var(--text2);
+        margin-top: 4px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+      .btn-success {
+        background: var(--success);
+        color: #fff;
+      }
+      .btn-success:hover {
+        filter: brightness(1.1);
+      }
+      .btn-warning {
+        background: var(--warning);
+        color: #fff;
+      }
+      .btn-warning:hover {
+        filter: brightness(1.1);
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: #fff;
+      }
+      .btn-danger:hover {
+        filter: brightness(1.1);
+      }
+      .btn-info {
+        background: var(--info);
+        color: #fff;
+      }
+      .btn-info:hover {
+        filter: brightness(1.1);
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .btn-outline:hover {
+        background: var(--bg3);
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 0.78rem;
+      }
+      .btn-xs {
+        padding: 3px 8px;
+        font-size: 0.7rem;
+      }
+
+      /* ==================== TABLES ==================== */
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+      th,
+      td {
+        padding: 10px 12px;
+        text-align: right;
+        border-bottom: 1px solid var(--border);
+      }
+      th {
+        font-size: 0.75rem;
+        color: var(--text2);
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      tr:hover td {
+        background: rgba(88, 166, 255, 0.05);
+      }
+      .actions {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+
+      /* ==================== TOGGLE ==================== */
+      .toggle-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+      .toggle {
+        width: 44px;
+        height: 24px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        position: relative;
+        transition: 0.3s;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .toggle.active {
+        background: var(--success);
+        border-color: var(--success);
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--text2);
+        transition: 0.3s;
+      }
+      .toggle.active::after {
+        right: 22px;
+        background: #fff;
+      }
+      .toggle-label {
+        font-size: 0.85rem;
+        color: var(--text2);
+      }
+
+      /* ==================== PLAYER BADGES ==================== */
+      .player-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        background: var(--bg3);
+        border-radius: 20px;
+        font-size: 0.78rem;
+        margin: 2px;
+        border: 1px solid var(--border);
+      }
+      .player-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 8px;
+      }
+
+      /* ==================== CONSOLE ==================== */
+      .console-container {
+        background: #000;
+        border-radius: 6px;
+        padding: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+        font-family: "Consolas", monospace;
+        font-size: 0.78rem;
+        line-height: 1.6;
+        direction: ltr;
+        text-align: left;
+      }
+      .console-line {
+        color: #ccc;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      .console-line.info {
+        color: #58a6ff;
+      }
+      .console-line.error {
+        color: #f85149;
+      }
+      .console-line.success {
+        color: #3fb950;
+      }
+      .console-line.warn {
+        color: #d29922;
+      }
+
+      /* ==================== TOAST ==================== */
+      .toast-container {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-width: 360px;
+      }
+      .toast {
+        padding: 14px 16px;
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        animation: slideIn 0.3s;
+        border: 1px solid var(--border);
+        background: var(--card);
+      }
+      .toast.success {
+        border-right: 4px solid var(--success);
+      }
+      .toast.error {
+        border-right: 4px solid var(--danger);
+      }
+      .toast.warning {
+        border-right: 4px solid var(--warning);
+      }
+      .toast.info {
+        border-right: 4px solid var(--info);
+      }
+      .toast-title {
+        font-weight: 700;
+        font-size: 0.88rem;
+        margin-bottom: 2px;
+      }
+      .toast-message {
+        font-size: 0.8rem;
+        color: var(--text2);
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateX(100px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* ==================== MODAL ==================== */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 5000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal-content {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 420px;
+        width: 100%;
+      }
+      .modal-content h2 {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+      }
+      .modal-content p {
+        color: var(--text2);
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      /* ==================== TABS ==================== */
+      .tabs {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        padding: 8px 16px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text2);
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.82rem;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .tab-btn:hover {
+        background: var(--bg3);
+        color: var(--text);
+      }
+      .tab-btn.active {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary);
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s;
+      }
+
+      /* ==================== ITEM BROWSER ==================== */
+      .item-browser {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 4000;
+        background: rgba(0, 0, 0, 0.8);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .item-browser.open {
+        display: flex;
+      }
+      .item-browser-content {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        max-width: 700px;
+        width: 100%;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .item-browser-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .item-browser-header h2 {
+        font-size: 1rem;
+      }
+      .item-browser-body {
+        padding: 16px 20px;
+        overflow-y: auto;
+        flex: 1;
+      }
+      .item-browser-search {
+        margin-bottom: 16px;
+      }
+      .item-categories {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .item-cat-btn {
+        padding: 6px 14px;
+        border-radius: 20px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        color: var(--text2);
+        cursor: pointer;
+        font-size: 0.78rem;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .item-cat-btn:hover {
+        background: var(--bg3);
+      }
+      .item-cat-btn.active {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary);
+      }
+      .item-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 6px;
+      }
+      .item-btn {
+        padding: 8px 10px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.78rem;
+        transition: all 0.2s;
+        text-align: center;
+      }
+      .item-btn:hover {
+        background: var(--bg3);
+        border-color: var(--primary);
+        transform: translateY(-1px);
+      }
+      .item-btn .item-name {
+        display: block;
+        font-size: 0.7rem;
+        color: var(--text2);
+        margin-top: 2px;
+      }
+
+      /* ==================== INVENTORY GRID ==================== */
+      .inv-grid {
+        display: grid;
+        grid-template-columns: repeat(9, 1fr);
+        gap: 4px;
+        max-width: 360px;
+      }
+      .inv-slot {
+        aspect-ratio: 1;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        padding: 2px;
+        text-align: center;
+        position: relative;
+        min-height: 44px;
+      }
+      .inv-slot .slot-count {
+        font-size: 0.65rem;
+        color: var(--primary);
+        font-weight: 700;
+      }
+      .inv-slot .slot-id {
+        font-size: 0.55rem;
+        color: var(--text2);
+        word-break: break-all;
+        line-height: 1.2;
+      }
+      .inv-slot.hotbar {
+        border-color: var(--primary);
+        border-style: dashed;
+      }
+      .inv-slot.armor {
+        border-color: var(--gold);
+      }
+      .inv-slot.offhand {
+        border-color: var(--purple);
+      }
+
+      /* ==================== LIVE PLAYER CARD ==================== */
+      .player-live-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+        transition: all 0.2s;
+      }
+      .player-live-card:hover {
+        border-color: var(--primary);
+      }
+      .player-live-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--bg3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .player-live-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .player-live-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      .player-live-details {
+        display: flex;
+        gap: 12px;
+        font-size: 0.75rem;
+        color: var(--text2);
+        flex-wrap: wrap;
+      }
+      .player-live-actions {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      .player-live-health {
+        color: var(--danger);
+      }
+      .player-live-food {
+        color: var(--gold);
+      }
+      .player-live-gm {
+        color: var(--cyan);
+      }
+      .player-live-pos {
+        color: var(--success);
+        font-family: monospace;
+        direction: ltr;
+      }
+
+      /* ==================== RESPONSIVE ==================== */
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          top: var(--header-h);
+          right: 0;
+          bottom: 0;
+          z-index: 200;
+          transform: translateX(100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .hamburger {
+          display: block;
+        }
+        .form-row {
+          flex-direction: column;
+        }
+        .form-group {
+          min-width: 100%;
+        }
+        .card-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .item-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .inv-grid {
+          max-width: 100%;
+        }
+        .player-live-card {
+          flex-wrap: wrap;
+        }
+      }
+
+      /* ==================== LOADING SPINNER ==================== */
+      .spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid var(--border);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        margin: 20px auto;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ==================== GAMERULES GRID ==================== */
+      .gr-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 8px;
+      }
+      .gr-item {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .gr-name {
+        font-size: 0.78rem;
+        color: var(--text2);
+      }
+      .gr-value {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      /* ==================== HEALTH BAR ==================== */
+      .health-bar {
+        display: inline-flex;
+        gap: 1px;
+        direction: ltr;
+      }
+      .health-heart {
+        width: 14px;
+        height: 14px;
+        clip-path: polygon(
+          50% 0%,
+          100% 30%,
+          80% 100%,
+          50% 80%,
+          20% 100%,
+          0% 30%
+        );
+      }
+      .health-heart.filled {
+        background: var(--danger);
+      }
+      .health-heart.half {
+        background: linear-gradient(90deg, var(--danger) 50%, var(--bg) 50%);
+      }
+      .health-heart.empty {
+        background: var(--bg3);
+      }
+      .food-icon {
+        width: 14px;
+        height: 14px;
+        background: var(--gold);
+        border-radius: 2px;
+        display: inline-block;
+      }
+
+      /* ==================== TAB STYLES ==================== */
+      h2.mb-20 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ==================== HEADER ==================== -->
+    <header class="header">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <h1>🎮 کنترل پنل ماینکرفت</h1>
+      <span class="server-status offline" id="serverStatusBadge">✗ آفلاین</span>
+      <label
+        style="
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.78rem;
+          color: var(--text2);
+          cursor: pointer;
+        "
+      >
+        <input
+          type="checkbox"
+          id="autoRefresh"
+          checked
+          onchange="toggleAutoRefresh()"
+          style="accent-color: var(--primary)"
+        />
+        Auto
+      </label>
+    </header>
+
+    <!-- ==================== LAYOUT ==================== -->
+    <div class="app-layout">
+      <!-- Sidebar -->
+      <nav class="sidebar" id="sidebar">
+        <div class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span> داشبورد
+        </div>
+        <div class="nav-item" data-page="players">
+          <span class="nav-icon">👥</span> بازیکنان آنلاین
+        </div>
+        <div class="nav-item" data-page="whitelist">
+          <span class="nav-icon">📝</span> وایت لیست
+        </div>
+        <div class="nav-item" data-page="bans">
+          <span class="nav-icon">🚫</span> بن‌ها
+        </div>
+        <div class="nav-item" data-page="ops">
+          <span class="nav-icon">⭐</span> اپراتورها
+        </div>
+        <div class="nav-item" data-page="server">
+          <span class="nav-icon">⚙️</span> تنظیمات سرور
+        </div>
+        <div class="nav-item" data-page="world">
+          <span class="nav-icon">🌍</span> جهان و آب و هوا
+        </div>
+        <div class="nav-item" data-page="players-actions">
+          <span class="nav-icon">🎮</span> عملیات بازیکن
+        </div>
+        <div class="nav-item" data-page="items">
+          <span class="nav-icon">📦</span> آیتم‌ها / Give
+        </div>
+        <div class="nav-item" data-page="inventory">
+          <span class="nav-icon">🎒</span> مشاهده انباری
+        </div>
+        <div class="nav-item" data-page="broadcast">
+          <span class="nav-icon">📢</span> پیام همگانی
+        </div>
+        <div class="nav-item" data-page="console">
+          <span class="nav-icon">💻</span> کنسول
+        </div>
+        <div class="nav-item" data-page="info">
+          <span class="nav-icon">ℹ️</span> اطلاعات سرور
+        </div>
+        <div class="nav-item" data-page="gamerules">
+          <span class="nav-icon">📜</span> Gamerules
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- ==================== DASHBOARD ==================== -->
+        <section class="page-section active" id="page-dashboard">
+          <div class="section-header">
+            <h2>📊 داشبورد</h2>
+            <button class="btn btn-outline btn-sm" onclick="loadDashboard()">
+              🔄 بروزرسانی
+            </button>
+          </div>
+          <div class="card-grid" id="dashCards">
+            <div class="card">
+              <div class="card-header"><h3>👥 آنلاین</h3></div>
+              <div class="stat-value" id="dashPlayersOnline">0</div>
+              <div class="stat-label">
+                از <span id="dashMaxPlayers">0</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>💠 TPS</h3></div>
+              <div
+                class="stat-value stat-tps"
+                id="dashTps"
+                style="font-size: 1rem"
+              >
+                --
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>🔄 ورژن</h3></div>
+              <div
+                class="stat-value"
+                id="dashVersion"
+                style="font-size: 0.85rem; word-break: break-all"
+              >
+                --
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>⚔️ Difficulty</h3></div>
+              <div class="stat-value" id="dashDifficulty">--</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>🚫 بن‌ها</h3></div>
+              <div class="stat-value stat-bans" id="dashBans">0</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>⭐ OPs</h3></div>
+              <div class="stat-value stat-ops" id="dashOps">0</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>🖥️ CPU</h3></div>
+              <div class="stat-value" id="dashCpu" style="font-size: 0.9rem">
+                --
+              </div>
+              <div class="stat-label">منابع سیستم</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>💾 RAM</h3></div>
+              <div class="stat-value" id="dashRam" style="font-size: 0.9rem">
+                --
+              </div>
+              <div class="stat-label" id="dashRamLabel">حافظه سیستم</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>👥 بازیکنان آنلاین</h3></div>
+            <div class="player-list" id="dashPlayerList">
+              <span class="text-muted">◉ در حال بارگذاری...</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== PLAYERS ==================== -->
+        <section class="page-section" id="page-players">
+          <div class="section-header">
+            <h2>👥 بازیکنان آنلاین (<span id="playersCount">0</span>)</h2>
+            <button
+              class="btn btn-outline btn-sm"
+              onclick="loadPlayersDetailed()"
+            >
+              🔄 بروزرسانی
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🔴 وضعیت لحظه‌ای بازیکنان</h3></div>
+            <div id="playersDetailedContainer">
+              <div class="text-center text-muted" style="padding: 30px">
+                در حال بارگذاری...
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== WHITELIST ==================== -->
+        <section class="page-section" id="page-whitelist">
+          <div class="section-header">
+            <h2>📝 وایت لیست (<span id="whitelistCount">0</span>)</h2>
+            <button class="btn btn-outline btn-sm" onclick="loadWhitelist()">
+              🔄 بروزرسانی
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>⚙️ وضعیت وایت لیست</h3></div>
+            <div class="flex gap-10" style="align-items: center">
+              <div class="toggle-wrap" onclick="toggleWhitelist()">
+                <div class="toggle" id="whitelistToggle"></div>
+                <span class="toggle-label" id="whitelistStatusLabel"
+                  >خاموش</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>➕ افزودن بازیکن</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="wlAddInput"
+                  placeholder="نام بازیکن..."
+                  onkeydown="if (event.key === 'Enter') whitelistAdd();"
+                />
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-success" onclick="whitelistAdd()">
+                  ➕ افزودن
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📋 لیست</h3></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>نام بازیکن</th>
+                    <th>عملیات</th>
+                  </tr>
+                </thead>
+                <tbody id="whitelistTableBody">
+                  <tr>
+                    <td colspan="2" class="text-center text-muted">
+                      در حال بارگذاری...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== BANS ==================== -->
+        <section class="page-section" id="page-bans">
+          <div class="section-header">
+            <h2>🚫 بن‌ها (<span id="banlistCount">0</span>)</h2>
+            <button class="btn btn-outline btn-sm" onclick="loadBans()">
+              🔄 بروزرسانی
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🚫 بن بازیکن</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="banPlayerInput"
+                  placeholder="نام بازیکن..."
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="banReasonInput"
+                  placeholder="دلیل بن (اختیاری)"
+                />
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-danger" onclick="banPlayer()">
+                  🚫 بن
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🚫 بن آی‌پی</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <input class="input" id="banIpInput" placeholder="آی‌پی..." />
+              </div>
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="banIpReasonInput"
+                  placeholder="دلیل (اختیاری)"
+                />
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-danger" onclick="banIp()">
+                  🚫 بن آی‌پی
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📋 لیست بن (جزئیات)</h3></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>نام</th>
+                    <th>دلیل بن</th>
+                    <th>تاریخ</th>
+                    <th>منبع</th>
+                    <th>عملیات</th>
+                  </tr>
+                </thead>
+                <tbody id="banlistTableBody">
+                  <tr>
+                    <td colspan="5" class="text-center text-muted">
+                      در حال بارگذاری...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== OPS ==================== -->
+        <section class="page-section" id="page-ops">
+          <div class="section-header">
+            <h2>⭐ اپراتورها (<span id="opCount">0</span>)</h2>
+            <button class="btn btn-outline btn-sm" onclick="loadOps()">
+              🔄 بروزرسانی
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>➕ افزودن اپراتور</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="opAddInput"
+                  placeholder="نام بازیکن..."
+                  onkeydown="if (event.key === 'Enter') addOp();"
+                />
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-primary" onclick="addOp()">
+                  ⭐ افزودن
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📋 لیست</h3></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>نام</th>
+                    <th>عملیات</th>
+                  </tr>
+                </thead>
+                <tbody id="opsTableBody">
+                  <tr>
+                    <td colspan="2" class="text-center text-muted">
+                      در حال بارگذاری...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== SERVER ==================== -->
+        <section class="page-section" id="page-server">
+          <h2 class="mb-20">⚙️ تنظیمات سرور</h2>
+          <div class="card">
+            <div class="card-header"><h3>🏷️ اطلاعات پنل</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>نام سرور</label>
+                <input
+                  class="input"
+                  id="configServerName"
+                  placeholder="نام سرور..."
+                />
+              </div>
+              <div class="form-group">
+                <label>توضیحات</label>
+                <input
+                  class="input"
+                  id="configDescription"
+                  placeholder="توضیحات سرور..."
+                />
+              </div>
+            </div>
+            <div class="form-row mt-10">
+              <div class="form-group">
+                <label>لینک Discord</label>
+                <input
+                  class="input"
+                  id="configDiscord"
+                  placeholder="https://discord.gg/..."
+                />
+              </div>
+              <div class="form-group">
+                <label>MOTD</label>
+                <input
+                  class="input"
+                  id="configMotd"
+                  placeholder="A Minecraft Server"
+                />
+              </div>
+            </div>
+            <div class="form-row mt-10">
+              <div class="form-group">
+                <label>آیکون سرور (64x64 PNG)</label>
+                <input
+                  type="file"
+                  class="input"
+                  id="configIconInput"
+                  accept="image/png"
+                  onchange="previewServerIcon(event)"
+                />
+                <div
+                  id="iconPreviewWrap"
+                  style="margin-top: 8px; display: none"
+                >
+                  <img
+                    id="iconPreview"
+                    style="
+                      width: 64px;
+                      height: 64px;
+                      border-radius: 6px;
+                      border: 2px solid var(--border);
+                    "
+                  />
+                  <button
+                    class="btn btn-danger btn-sm mt-5"
+                    onclick="clearServerIcon()"
+                  >
+                    🗑️ حذف آیکون
+                  </button>
+                </div>
+              </div>
+              <div
+                class="form-group"
+                style="flex: 0; display: flex; align-items: flex-end"
+              >
+                <button class="btn btn-success" onclick="saveServerConfig()">
+                  💾 ذخیره تنظیمات
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>⚔️ Difficulty</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <select class="input" id="difficultySelect">
+                  <option value="peaceful">Peaceful</option>
+                  <option value="easy">Easy</option>
+                  <option value="normal" selected>Normal</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-primary" onclick="changeDifficulty()">
+                  تغییر
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🎮 تغییر GameMode بازیکن</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="gmPlayer"
+                  placeholder="نام بازیکن..."
+                />
+              </div>
+              <div class="form-group">
+                <select class="input" id="gmSelect">
+                  <option value="survival">Survival</option>
+                  <option value="creative">Creative</option>
+                  <option value="adventure">Adventure</option>
+                  <option value="spectator">Spectator</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-primary" onclick="changeGamemode()">
+                  اعمال
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>💾 ذخیره و ریستارت</h3></div>
+            <div class="flex gap-10">
+              <button class="btn btn-success" onclick="saveAll()">
+                💾 ذخیره جهان
+              </button>
+              <button class="btn btn-danger" onclick="restartServer()">
+                🔁 ریستارت سرور
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🔄 تغییر GameMode پیش‌فرض</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <select class="input" id="defaultGmSelect">
+                  <option value="survival">Survival</option>
+                  <option value="creative">Creative</option>
+                  <option value="adventure">Adventure</option>
+                  <option value="spectator">Spectator</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button
+                  class="btn btn-primary"
+                  onclick="changeDefaultGamemode()"
+                >
+                  اعمال
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== WORLD ==================== -->
+        <section class="page-section" id="page-world">
+          <h2 class="mb-20">🌍 جهان و آب و هوا</h2>
+          <div class="card">
+            <div class="card-header"><h3>🌤️ آب و هوا</h3></div>
+            <div class="flex gap-10">
+              <button class="btn btn-primary" onclick="setWeather('clear')">
+                ☀️ صاف
+              </button>
+              <button class="btn btn-info" onclick="setWeather('rain')">
+                🌧️ بارانی
+              </button>
+              <button class="btn btn-warning" onclick="setWeather('thunder')">
+                ⛈️ طوفان
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🕐 زمان</h3></div>
+            <div class="flex gap-10" style="flex-wrap: wrap">
+              <button class="btn btn-success" onclick="setTime('day')">
+                ☀️ روز
+              </button>
+              <button class="btn btn-info" onclick="setTime('noon')">
+                🌞 ظهر
+              </button>
+              <button class="btn btn-warning" onclick="setTime('night')">
+                🌙 شب
+              </button>
+              <button class="btn btn-primary" onclick="setTime('midnight')">
+                🌚 نیمه شب
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📍 اسپاون جهان</h3></div>
+            <button class="btn btn-info" onclick="setWorldSpawn()">
+              📍 تنظیم اسپاون
+            </button>
+          </div>
+        </section>
+
+        <!-- ==================== PLAYER ACTIONS ==================== -->
+        <section class="page-section" id="page-players-actions">
+          <h2 class="mb-20">🎮 عملیات بازیکن</h2>
+          <div class="tabs" id="playerActionsTabs">
+            <button class="tab-btn active" data-tab="tab-kick">🥾 Kick</button>
+            <button class="tab-btn" data-tab="tab-give">🎁 Give</button>
+            <button class="tab-btn" data-tab="tab-tp">📍 Teleport</button>
+            <button class="tab-btn" data-tab="tab-effect">✨ Effect</button>
+            <button class="tab-btn" data-tab="tab-enchant">🔮 Enchant</button>
+            <button class="tab-btn" data-tab="tab-xp">📈 XP</button>
+            <button class="tab-btn" data-tab="tab-clear">🧹 Clear</button>
+            <button class="tab-btn" data-tab="tab-kill">💀 Kill</button>
+          </div>
+          <!-- Kick -->
+          <div class="tab-content active" id="tab-kick">
+            <div class="card">
+              <div class="card-header"><h3>🥾 Kick بازیکن</h3></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="kickPlayer"
+                    placeholder="نام بازیکن..."
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="kickReason"
+                    placeholder="دلیل (اختیاری)"
+                  />
+                </div>
+                <div class="form-group" style="flex: 0">
+                  <button class="btn btn-warning" onclick="kickPlayer()">
+                    🥾 Kick
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Give (with item browser) -->
+          <div class="tab-content" id="tab-give">
+            <div class="card">
+              <div class="card-header"><h3>🎁 Give Item</h3></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="givePlayer"
+                    placeholder="نام بازیکن..."
+                  />
+                </div>
+                <div class="form-group">
+                  <div class="flex gap-5">
+                    <input
+                      class="input"
+                      id="giveItem"
+                      placeholder="آیتم (مثل minecraft:diamond)"
+                      style="flex: 1"
+                    />
+                    <button
+                      class="btn btn-info btn-sm"
+                      onclick="openItemBrowser()"
+                    >
+                      📦 انتخاب
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="giveAmount"
+                    placeholder="تعداد"
+                    value="1"
+                    type="number"
+                    min="1"
+                    max="9999"
+                  />
+                </div>
+                <div class="form-group" style="flex: 0">
+                  <button class="btn btn-success" onclick="giveItem()">
+                    🎁 Give
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- TP -->
+          <div class="tab-content" id="tab-tp">
+            <div class="card">
+              <div class="card-header"><h3>📍 Teleport</h3></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="tpPlayer"
+                    placeholder="نام بازیکن..."
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="tpX"
+                    placeholder="X"
+                    type="number"
+                    step="0.5"
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="tpY"
+                    placeholder="Y"
+                    type="number"
+                    step="0.5"
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="tpZ"
+                    placeholder="Z"
+                    type="number"
+                    step="0.5"
+                  />
+                </div>
+                <div class="form-group" style="flex: 0">
+                  <button class="btn btn-info" onclick="teleportPlayer()">
+                    📍 Teleport
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Effect -->
+          <div class="tab-content" id="tab-effect">
+            <div class="card">
+              <div class="card-header"><h3>✨ Effect</h3></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="effectPlayer"
+                    placeholder="نام بازیکن..."
+                  />
+                </div>
+                <div class="form-group">
+                  <select class="input" id="effectType">
+                    <option value="speed">Speed</option>
+                    <option value="strength">Strength</option>
+                    <option value="regeneration">Regeneration</option>
+                    <option value="resistance">Resistance</option>
+                    <option value="haste">Haste</option>
+                    <option value="jump_boost">Jump Boost</option>
+                    <option value="night_vision">Night Vision</option>
+                    <option value="invisibility">Invisibility</option>
+                    <option value="fire_resistance">Fire Resistance</option>
+                    <option value="water_breathing">Water Breathing</option>
+                    <option value="levitation">Levitation</option>
+                    <option value="slow_falling">Slow Falling</option>
+                    <option value="absorption">Absorption</option>
+                    <option value="saturation">Saturation</option>
+                    <option value="luck">Luck</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="effectDuration"
+                    placeholder="مدت (ثانیه)"
+                    value="30"
+                    type="number"
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="effectAmplifier"
+                    placeholder="قدرت"
+                    value="1"
+                    type="number"
+                  />
+                </div>
+                <div class="form-group" style="flex: 0">
+                  <button class="btn btn-primary" onclick="giveEffect()">
+                    ✨ اعمال
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Enchant -->
+          <div class="tab-content" id="tab-enchant">
+            <div class="card">
+              <div class="card-header"><h3>🔮 Enchant</h3></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="enchantPlayer"
+                    placeholder="نام بازیکن..."
+                  />
+                </div>
+                <div class="form-group">
+                  <select class="input" id="enchantType">
+                    <option value="sharpness">Sharpness</option>
+                    <option value="protection">Protection</option>
+                    <option value="efficiency">Efficiency</option>
+                    <option value="unbreaking">Unbreaking</option>
+                    <option value="fortune">Fortune</option>
+                    <option value="mending">Mending</option>
+                    <option value="power">Power</option>
+                    <option value="looting">Looting</option>
+                    <option value="silk_touch">Silk Touch</option>
+                    <option value="fire_aspect">Fire Aspect</option>
+                    <option value="depth_strider">Depth Strider</option>
+                    <option value="feather_falling">Feather Falling</option>
+                    <option value="respiration">Respiration</option>
+                    <option value="soul_speed">Soul Speed</option>
+                    <option value="swift_sneak">Swift Sneak</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="enchantLevel"
+                    placeholder="Level"
+                    value="1"
+                    type="number"
+                    min="1"
+                    max="99999"
+                  />
+                </div>
+                <div class="form-group" style="flex: 0">
+                  <button class="btn btn-primary" onclick="enchantItem()">
+                    🔮 اعمال
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- XP -->
+          <div class="tab-content" id="tab-xp">
+            <div class="card">
+              <div class="card-header"><h3>📈 تجربه (XP)</h3></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="xpPlayer"
+                    placeholder="نام بازیکن..."
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="xpAmount"
+                    placeholder="مقدار"
+                    value="100"
+                    type="number"
+                  />
+                </div>
+                <div class="form-group" style="flex: 0">
+                  <button class="btn btn-success" onclick="giveXp()">
+                    📈 اعمال
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Clear -->
+          <div class="tab-content" id="tab-clear">
+            <div class="card">
+              <div class="card-header"><h3>🧹 Clear Inventory</h3></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="clearPlayer"
+                    placeholder="نام بازیکن..."
+                  />
+                </div>
+                <div class="form-group" style="flex: 0">
+                  <button class="btn btn-warning" onclick="clearInventory()">
+                    🧹 Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Kill -->
+          <div class="tab-content" id="tab-kill">
+            <div class="card">
+              <div class="card-header"><h3>💀 Kill Entity</h3></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <input
+                    class="input"
+                    id="killTarget"
+                    placeholder="هدف (@e, @a, player, ...)"
+                  />
+                </div>
+                <div class="form-group" style="flex: 0">
+                  <button class="btn btn-danger" onclick="killEntity()">
+                    💀 Kill
+                  </button>
+                </div>
+              </div>
+              <div class="form-hint">
+                مثال: @e[type=zombie] (همه زامبی‌ها), Notch (یک بازیکن خاص)
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== ITEMS / GIVE ==================== -->
+        <section class="page-section" id="page-items">
+          <h2 class="mb-20">📦 آیتم‌ها / Give</h2>
+          <div class="card">
+            <div class="card-header"><h3>🎁 ارسال آیتم به بازیکن</h3></div>
+            <div class="form-row mb-15">
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="itemsGivePlayer"
+                  placeholder="نام بازیکن..."
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="itemsGiveAmount"
+                  placeholder="تعداد"
+                  value="1"
+                  type="number"
+                  min="1"
+                />
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-success" onclick="giveItemFromBrowser()">
+                  🎁 ارسال
+                </button>
+              </div>
+            </div>
+            <div class="card-header"><h3>🔍 جستجوی آیتم</h3></div>
+            <div class="form-row mb-15">
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="itemsSearchInput"
+                  placeholder="نام آیتم را جستجو کنید..."
+                  oninput="searchItemsFrontend()"
+                />
+              </div>
+            </div>
+            <div id="itemsSearchResults" class="item-grid"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📂 دسته‌بندی آیتم‌ها</h3></div>
+            <div class="item-categories" id="itemsCategories"></div>
+            <div class="item-grid" id="itemsGrid"></div>
+          </div>
+        </section>
+
+        <!-- ==================== INVENTORY VIEWER ==================== -->
+        <section class="page-section" id="page-inventory">
+          <div class="section-header">
+            <h2>🎒 مشاهده انباری بازیکن</h2>
+            <button
+              class="btn btn-outline btn-sm"
+              onclick="loadPlayerInventory()"
+            >
+              🔄 بروزرسانی
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🔍 انتخاب بازیکن آنلاین</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <select class="input" id="invPlayerSelect">
+                  <option value="">-- انتخاب بازیکن --</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-primary" onclick="loadPlayerInventory()">
+                  📂 مشاهده
+                </button>
+              </div>
+            </div>
+            <div class="form-hint mt-10">
+              برای دیدن انباری بازیکنان آفلاین، نام آن‌ها را مستقیماً وارد کنید
+            </div>
+            <div class="form-row mt-10">
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="invPlayerManual"
+                  placeholder="نام بازیکن (دستی)"
+                />
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button
+                  class="btn btn-info"
+                  onclick="loadPlayerInventoryManual()"
+                >
+                  📂 مشاهده
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="inventoryDisplay">
+            <div class="text-center text-muted" style="padding: 30px">
+              👈 یک بازیکن را انتخاب کنید و انباری او را ببینید
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== BROADCAST ==================== -->
+        <section class="page-section" id="page-broadcast">
+          <h2 class="mb-20">📢 پیام همگانی</h2>
+          <div class="card mb-20">
+            <div class="card-header"><h3>📢 ارسال پیام (Say)</h3></div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 3">
+                <input
+                  class="input"
+                  id="sayMessage"
+                  placeholder="متن پیام..."
+                  onkeydown="if (event.key === 'Enter') sayMessage();"
+                />
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-primary" onclick="sayMessage()">
+                  📤 ارسال
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🎬 Title همگانی</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="titleText"
+                  placeholder="Title (متن اصلی)..."
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  class="input"
+                  id="subtitleText"
+                  placeholder="Subtitle (اختیاری)..."
+                />
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-info" onclick="sendTitle()">
+                  🎬 ارسال
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== CONSOLE ==================== -->
+        <section class="page-section" id="page-console">
+          <div class="section-header">
+            <h2>💻 کنسول</h2>
+            <button class="btn btn-danger btn-sm" onclick="clearConsole()">
+              🗑️ پاک کردن
+            </button>
+          </div>
+          <div class="card mb-20">
+            <div class="card-header"><h3>⌨️ اجرای دستور</h3></div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 3">
+                <input
+                  class="input"
+                  id="consoleCommand"
+                  placeholder="/ دستور (بدون /)... مثال: say Hello"
+                  onkeydown="if (event.key === 'Enter') runConsoleCommand();"
+                />
+              </div>
+              <div class="form-group" style="flex: 0">
+                <button class="btn btn-success" onclick="runConsoleCommand()">
+                  ▶️ اجرا
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📋 خروجی</h3></div>
+            <div class="console-container" id="consoleOutput">
+              <div class="console-line info">
+                ▶️ کنسول آماده است. دستورات را اجرا کنید...
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== INFO ==================== -->
+        <section class="page-section" id="page-info">
+          <h2 class="mb-20">ℹ️ اطلاعات سرور</h2>
+          <div class="card-grid small-cards" id="infoContainer">
+            <div class="card">
+              <div class="card-header"><h3>🔄 ورژن</h3></div>
+              <div id="infoVersion" class="text-muted">--</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>🌱 Seed</h3></div>
+              <div id="infoSeed" class="text-muted word-break">--</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>⚔️ Difficulty</h3></div>
+              <div id="infoDifficulty" class="text-muted">--</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>🎮 Default GameMode</h3></div>
+              <div id="infoGamemode" class="text-muted">--</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>🔄 TPS</h3></div>
+              <div id="infoTps" class="stat-tps">--</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>👥 حداکثر بازیکن</h3></div>
+              <div id="infoMaxPlayers" class="text-muted">--</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>🚫 بن شده‌ها</h3></div>
+              <div id="infoBans" class="stat-bans">--</div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>⭐ Operators</h3></div>
+              <div id="infoOps" class="stat-ops">--</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== GAMERULES ==================== -->
+        <section class="page-section" id="page-gamerules">
+          <div class="section-header">
+            <h2>📜 Gamerules</h2>
+            <button class="btn btn-outline btn-sm" onclick="loadGamerules()">
+              🔄 بروزرسانی
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📋 قوانین سرور</h3></div>
+            <div id="gamerulesContainer">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- ==================== ITEM BROWSER MODAL ==================== -->
+    <div class="item-browser" id="itemBrowser">
+      <div class="item-browser-content">
+        <div class="item-browser-header">
+          <h2>📦 انتخاب آیتم</h2>
+          <button class="btn btn-outline btn-sm" onclick="closeItemBrowser()">
+            ✕ بستن
+          </button>
+        </div>
+        <div class="item-browser-body">
+          <div class="item-browser-search">
+            <input
+              class="input"
+              id="itemBrowserSearch"
+              placeholder="🔍 جستجوی آیتم..."
+              oninput="searchItemBrowser()"
+            />
+          </div>
+          <div class="item-categories" id="itemBrowserCategories"></div>
+          <div class="item-grid" id="itemBrowserGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-content">
+        <h2 id="modalTitle">تایید</h2>
+        <p id="modalBody">آیا مطمئن هستید؟</p>
+        <div class="modal-actions">
+          <button class="btn btn-outline" onclick="closeModal()">لغو</button>
+          <button
+            class="btn btn-danger"
+            id="modalConfirmBtn"
+            onclick="closeModal()"
+          >
+            تایید
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ======================================================================
+      // STATE
+      // ======================================================================
+      const API = {
+        async get(url) {
+          const r = await fetch(url);
+          return r.json();
+        },
+        async post(url, data) {
+          const r = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          return r.json();
+        },
+      };
+
+      let autoRefreshInterval = null;
+      const REFRESH_INTERVAL = 5000;
+      let currentPage = "dashboard";
+      let itemsDatabase = null;
+      let selectedItemForBrowser = null;
+
+      // ======================================================================
+      // TOAST / NOTIFICATION
+      // ======================================================================
+      function showToast(title, message, type = "info") {
+        const container = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<div class="toast-title">${escapeHtml(title)}</div><div class="toast-message">${escapeHtml(message)}</div>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transition = "opacity 0.5s";
+          setTimeout(() => toast.remove(), 500);
+        }, 4000);
+      }
+
+      // ======================================================================
+      // MODAL
+      // ======================================================================
+      function openModal(title, body, onConfirm) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalBody").textContent = body;
+        document.getElementById("modalOverlay").classList.add("open");
+        const btn = document.getElementById("modalConfirmBtn");
+        btn.onclick = () => {
+          closeModal();
+          onConfirm();
+        };
+      }
+      function closeModal() {
+        document.getElementById("modalOverlay").classList.remove("open");
+      }
+
+      // ======================================================================
+      // SIDEBAR
+      // ======================================================================
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+      }
+
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const page = item.dataset.page;
+          document
+            .querySelectorAll(".nav-item")
+            .forEach((n) => n.classList.remove("active"));
+          item.classList.add("active");
+          document
+            .querySelectorAll(".page-section")
+            .forEach((s) => s.classList.remove("active"));
+          document.getElementById(`page-${page}`).classList.add("active");
+          currentPage = page;
+          refreshCurrentPage();
+          if (window.innerWidth <= 768)
+            document.getElementById("sidebar").classList.remove("open");
+        });
+      });
+
+      // Tabs
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tab = btn.dataset.tab;
+          document
+            .querySelectorAll(".tab-btn")
+            .forEach((t) => t.classList.remove("active"));
+          btn.classList.add("active");
+          document
+            .querySelectorAll(".tab-content")
+            .forEach((t) => t.classList.remove("active"));
+          document.getElementById(tab).classList.add("active");
+        });
+      });
+
+      // ======================================================================
+      // AUTO REFRESH
+      // ======================================================================
+      function toggleAutoRefresh() {
+        if (document.getElementById("autoRefresh").checked) startAutoRefresh();
+        else stopAutoRefresh();
+      }
+      function startAutoRefresh() {
+        stopAutoRefresh();
+        autoRefreshInterval = setInterval(() => {
+          refreshCurrentPage();
+        }, REFRESH_INTERVAL);
+      }
+      function stopAutoRefresh() {
+        if (autoRefreshInterval) {
+          clearInterval(autoRefreshInterval);
+          autoRefreshInterval = null;
+        }
+      }
+      function refreshCurrentPage() {
+        switch (currentPage) {
+          case "dashboard":
+            loadDashboard();
+            break;
+          case "players":
+            loadPlayersDetailed();
+            break;
+          case "whitelist":
+            loadWhitelist();
+            break;
+          case "bans":
+            loadBans();
+            break;
+          case "ops":
+            loadOps();
+            break;
+          case "info":
+            loadInfo();
+            break;
+          case "gamerules":
+            break;
+          default:
+            break;
+        }
+      }
+
+      // ======================================================================
+      // ESCAPE HTML
+      // ======================================================================
+      function escapeHtml(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/&/g, "&")
+          .replace(/</g, "<")
+          .replace(/>/g, ">")
+          .replace(/"/g, '"')
+          .replace(/'/g, "&#039;");
+      }
+
+      // ======================================================================
+      // HEALTH VISUALIZATION
+      // ======================================================================
+      function renderHealth(health, maxHealth) {
+        const h = Math.round(health || 0);
+        const max = Math.round(maxHealth || 20);
+        let html = '<div class="health-bar">';
+        for (let i = 0; i < max / 2; i++) {
+          const val = h - i * 2;
+          if (val >= 2) html += '<span class="health-heart filled"></span>';
+          else if (val >= 1) html += '<span class="health-heart half"></span>';
+          else html += '<span class="health-heart empty"></span>';
+        }
+        html += "</div>";
+        return html;
+      }
+
+      function renderFood(food) {
+        const f = Math.round(food || 0);
+        let html = '<div class="health-bar" style="gap:1px">';
+        for (let i = 0; i < 10; i++) {
+          if (i < f / 2) html += '<span class="food-icon"></span>';
+          else html += '<span class="food-icon" style="opacity:0.2"></span>';
+        }
+        html += "</div>";
+        return html;
+      }
+
+      // ======================================================================
+      // DASHBOARD
+      // ======================================================================
+      async function loadDashboard() {
+        try {
+          const data = await API.get("/api/dashboard");
+          if (!data.success) {
+            showToast("خطا", data.error, "error");
+            return;
+          }
+          document.getElementById("dashPlayersOnline").textContent =
+            data.playersOnline ?? 0;
+          document.getElementById("dashMaxPlayers").textContent =
+            data.maxPlayers ?? 0;
+          document.getElementById("dashTps").textContent = data.tps
+            ? data.tps.substring(0, 80)
+            : "--";
+          document.getElementById("dashVersion").textContent = data.version
+            ? data.version.substring(0, 60)
+            : "--";
+          document.getElementById("dashDifficulty").textContent =
+            data.difficulty ?? "--";
+          document.getElementById("dashBans").textContent = data.bans ?? 0;
+          document.getElementById("dashOps").textContent = data.ops ?? 0;
+
+          // Load system resources
+          try {
+            const sysData = await API.get("/api/system");
+            if (sysData.success) {
+              const cpu = sysData.cpu;
+              const ram = sysData.ram;
+              document.getElementById("dashCpu").textContent = cpu
+                ? `${cpu.usage || cpu.load || "?"}%`
+                : "N/A";
+              document.getElementById("dashRam").textContent = ram
+                ? `${ram.used || ram.usage || "?"} / ${ram.total || "?"} GB`
+                : "N/A";
+              if (ram && ram.percent) {
+                document.getElementById("dashRamLabel").textContent =
+                  `${ram.percent}% استفاده`;
+              }
+            } else {
+              document.getElementById("dashCpu").textContent = "N/A";
+              document.getElementById("dashRam").textContent = "N/A";
+            }
+          } catch (e) {
+            document.getElementById("dashCpu").textContent = "N/A";
+            document.getElementById("dashRam").textContent = "N/A";
+          }
+
+          const playerList = document.getElementById("dashPlayerList");
+          if (data.players && data.players.length > 0) {
+            playerList.innerHTML = data.players
+              .map(
+                (p) => `<span class="player-badge">🟢 ${escapeHtml(p)}</span>`,
+              )
+              .join("");
+          } else {
+            playerList.innerHTML =
+              data.playersOnline > 0
+                ? '<span class="text-muted">بازیکنان: بارگذاری نشد</span>'
+                : '<span class="text-muted">◉ هیچ بازیکنی آنلاین نیست</span>';
+          }
+
+          document.getElementById("serverStatusBadge").textContent = "◉ آنلاین";
+          document.getElementById("serverStatusBadge").className =
+            "server-status online";
+        } catch (e) {
+          showToast("خطا", "اتصال به سرور برقرار نیست", "error");
+          document.getElementById("serverStatusBadge").textContent = "✗ آفلاین";
+          document.getElementById("serverStatusBadge").className =
+            "server-status offline";
+        }
+      }
+
+      // ======================================================================
+      // PLAYERS - DETAILED WITH LIVE LOCATION
+      // ======================================================================
+      async function loadPlayersDetailed() {
+        try {
+          const data = await API.get("/api/players/detailed");
+          if (!data.success) {
+            showToast("خطا", data.error, "error");
+            return;
+          }
+          document.getElementById("playersCount").textContent =
+            data.online ?? 0;
+          const container = document.getElementById("playersDetailedContainer");
+
+          if (data.players && data.players.length > 0) {
+            container.innerHTML = data.players
+              .map((p) => {
+                const healthHtml = p.health
+                  ? `${renderHealth(p.health)} <span class="text-muted text-sm">${p.health}</span>`
+                  : '<span class="text-muted">?</span>';
+                const foodHtml = p.food
+                  ? `${renderFood(p.food)} <span class="text-muted text-sm">${p.food}</span>`
+                  : '<span class="text-muted">?</span>';
+                const posHtml = p.position
+                  ? `<span class="player-live-pos">📍 ${p.position.x}, ${p.position.y}, ${p.position.z}</span>`
+                  : '<span class="text-muted">📍 نامشخص</span>';
+                const gmIcon =
+                  p.gamemode === "creative"
+                    ? "🎨"
+                    : p.gamemode === "survival"
+                      ? "⚔️"
+                      : p.gamemode === "spectator"
+                        ? "👻"
+                        : "🌍";
+
+                return `<div class="player-live-card">
+          <div class="player-live-avatar">${gmIcon}</div>
+          <div class="player-live-info">
+            <div class="player-live-name">${escapeHtml(p.name)}</div>
+            <div class="player-live-details">
+              <span class="player-live-health">${healthHtml}</span>
+              <span class="player-live-food">${foodHtml}</span>
+              <span class="player-live-gm">${gmIcon} ${p.gamemode}</span>
+              ${posHtml}
+            </div>
+          </div>
+          <div class="player-live-actions">
+            <button class="btn btn-danger btn-xs" onclick="quickKick('${escapeHtml(p.name)}')">🥾</button>
+            <button class="btn btn-warning btn-xs" onclick="quickBan('${escapeHtml(p.name)}')">🚫</button>
+            <button class="btn btn-info btn-xs" onclick="quickTpHere('${escapeHtml(p.name)}')">📍</button>
+            <button class="btn btn-success btn-xs" onclick="quickInv('${escapeHtml(p.name)}')">🎒</button>
+          </div>
+        </div>`;
+              })
+              .join("");
+          } else {
+            container.innerHTML =
+              '<div class="text-center text-muted" style="padding:30px">◉ هیچ بازیکنی آنلاین نیست</div>';
+          }
+
+          // Update inventory player select dropdown
+          const select = document.getElementById("invPlayerSelect");
+          if (data.players) {
+            const currentVal = select.value;
+            select.innerHTML =
+              '<option value="">-- انتخاب بازیکن --</option>' +
+              data.players
+                .map(
+                  (p) =>
+                    `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}${p.gamemode ? " (" + p.gamemode + ")" : ""}</option>`,
+                )
+                .join("");
+            if (currentVal) select.value = currentVal;
+          }
+        } catch (e) {
+          showToast("خطا", "خطا در دریافت لیست بازیکنان", "error");
+        }
+      }
+
+      function quickKick(name) {
+        document.querySelector('[data-page="players-actions"]').click();
+        document.querySelector('[data-tab="tab-kick"]').click();
+        document.getElementById("kickPlayer").value = name;
+      }
+      function quickBan(name) {
+        document.querySelector('[data-page="bans"]').click();
+        document.getElementById("banPlayerInput").value = name;
+      }
+      function quickTpHere(name) {
+        document.querySelector('[data-page="players-actions"]').click();
+        document.querySelector('[data-tab="tab-tp"]').click();
+        document.getElementById("tpPlayer").value = name;
+        // Suggest current position from the card - get from nearby element
+      }
+      async function quickInv(name) {
+        document.querySelector('[data-page="inventory"]').click();
+        document.getElementById("invPlayerManual").value = name;
+        await loadPlayerInventoryManual();
+      }
+
+      // ======================================================================
+      // WHITELIST
+      // ======================================================================
+      async function loadWhitelist() {
+        try {
+          const data = await API.get("/api/whitelist");
+          if (!data.success) {
+            showToast("خطا", data.error, "error");
+            return;
+          }
+          document.getElementById("whitelistCount").textContent =
+            data.total ?? 0;
+          const tbody = document.getElementById("whitelistTableBody");
+          if (data.players && data.players.length > 0) {
+            tbody.innerHTML = data.players
+              .map(
+                (p) => `
+        <tr>
+          <td>${escapeHtml(p)}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="whitelistRemove('${escapeHtml(p)}')">🗑️ حذف</button></td>
+        </tr>
+      `,
+              )
+              .join("");
+          } else {
+            tbody.innerHTML =
+              '<tr><td colspan="2" class="text-center text-muted">هیچ بازیکنی در وایت لیست نیست</td></tr>';
+          }
+          if (data.raw && data.raw.toLowerCase().includes("on")) {
+            document.getElementById("whitelistToggle").classList.add("active");
+            document.getElementById("whitelistStatusLabel").textContent =
+              "روشن";
+          } else {
+            document
+              .getElementById("whitelistToggle")
+              .classList.remove("active");
+            document.getElementById("whitelistStatusLabel").textContent =
+              "خاموش";
+          }
+        } catch (e) {
+          showToast("خطا", "خطا در دریافت وایت لیست", "error");
+        }
+      }
+
+      async function whitelistAdd() {
+        const player = document.getElementById("wlAddInput").value.trim();
+        if (!player) {
+          showToast("خطا", "نام بازیکن را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/whitelist/add", { player });
+        if (data.success) {
+          showToast(
+            "✅ موفق",
+            `بازیکن ${player} به وایت لیست اضافه شد`,
+            "success",
+          );
+          document.getElementById("wlAddInput").value = "";
+          loadWhitelist();
+        } else showToast("خطا", data.error || "خطا", "error");
+      }
+
+      async function whitelistRemove(player) {
+        const data = await API.post("/api/whitelist/remove", { player });
+        if (data.success) {
+          showToast("✅ موفق", `${player} از وایت لیست حذف شد`, "success");
+          loadWhitelist();
+        } else showToast("خطا", data.error || "خطا", "error");
+      }
+
+      async function toggleWhitelist() {
+        const toggle = document.getElementById("whitelistToggle");
+        const enable = !toggle.classList.contains("active");
+        const data = await API.post("/api/whitelist/toggle", { enable });
+        if (data.success) {
+          if (enable) {
+            toggle.classList.add("active");
+            document.getElementById("whitelistStatusLabel").textContent =
+              "روشن";
+          } else {
+            toggle.classList.remove("active");
+            document.getElementById("whitelistStatusLabel").textContent =
+              "خاموش";
+          }
+          showToast(
+            "✅ وایت لیست",
+            enable ? "وایت لیست روشن شد" : "وایت لیست خاموش شد",
+            "success",
+          );
+        } else showToast("خطا", data.error, "error");
+      }
+
+      // ======================================================================
+      // BANS
+      // ======================================================================
+      async function loadBans() {
+        try {
+          const [banlistRes, detailsRes] = await Promise.all([
+            API.get("/api/banlist"),
+            API.get("/api/banlist/details").catch(() => null),
+          ]);
+          if (!banlistRes.success) {
+            showToast("خطا", banlistRes.error, "error");
+            return;
+          }
+          document.getElementById("banlistCount").textContent =
+            banlistRes.total ?? 0;
+          const tbody = document.getElementById("banlistTableBody");
+
+          // Build a map of ban details keyed by player name
+          const detailsMap = {};
+          if (detailsRes && detailsRes.success && detailsRes.bans) {
+            detailsRes.bans.forEach((ban) => {
+              detailsMap[ban.name?.toLowerCase()] = ban;
+            });
+          }
+
+          if (banlistRes.players && banlistRes.players.length > 0) {
+            tbody.innerHTML = banlistRes.players
+              .map((p) => {
+                const detail = detailsMap[p.toLowerCase()];
+                const reason = detail?.reason || "—";
+                const created = detail?.created || detail?.date || "—";
+                const source = detail?.source || "—";
+                // Format date nicely if it's a timestamp
+                let dateStr = created;
+                if (
+                  typeof created === "number" ||
+                  (typeof created === "string" &&
+                    !isNaN(Date.parse(created)) &&
+                    created !== "—")
+                ) {
+                  try {
+                    const d = new Date(
+                      typeof created === "number" ? created * 1000 : created,
+                    );
+                    dateStr = d.toLocaleDateString("fa-IR", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
+                  } catch (e) {
+                    dateStr = created;
+                  }
+                }
+                return `<tr>
+          <td><strong>${escapeHtml(p)}</strong></td>
+          <td><span title="${escapeHtml(reason)}">${escapeHtml(reason.length > 40 ? reason.substring(0, 40) + "..." : reason)}</span></td>
+          <td style="font-size:0.78rem;white-space:nowrap">${escapeHtml(dateStr)}</td>
+          <td>${escapeHtml(source)}</td>
+          <td><button class="btn btn-success btn-sm" onclick="pardonPlayer('${escapeHtml(p)}')">🔓 عفو</button></td>
+        </tr>`;
+              })
+              .join("");
+          } else {
+            tbody.innerHTML =
+              '<tr><td colspan="5" class="text-center text-muted">هیچ بازیکنی بن نشده</td></tr>';
+          }
+        } catch (e) {
+          showToast("خطا", "خطا در دریافت لیست بن", "error");
+        }
+      }
+
+      async function banPlayer() {
+        const player = document.getElementById("banPlayerInput").value.trim();
+        const reason = document.getElementById("banReasonInput").value.trim();
+        if (!player) {
+          showToast("خطا", "نام بازیکن را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/ban", { player, reason });
+        if (data.success) {
+          showToast("🚫 بن", `بازیکن ${player} بن شد`, "warning");
+          document.getElementById("banPlayerInput").value = "";
+          document.getElementById("banReasonInput").value = "";
+          loadBans();
+        } else showToast("خطا", data.error, "error");
+      }
+
+      async function banIp() {
+        const ip = document.getElementById("banIpInput").value.trim();
+        const reason = document.getElementById("banIpReasonInput").value.trim();
+        if (!ip) {
+          showToast("خطا", "آی‌پی را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/ban-ip", { ip, reason });
+        if (data.success) {
+          showToast("🚫 بن آی‌پی", `آی‌پی ${ip} بن شد`, "warning");
+          document.getElementById("banIpInput").value = "";
+          document.getElementById("banIpReasonInput").value = "";
+        } else showToast("خطا", data.error, "error");
+      }
+
+      async function pardonPlayer(player) {
+        const data = await API.post("/api/pardon", { player });
+        if (data.success) {
+          showToast("🔓 عفو", `${player} عفو شد`, "success");
+          loadBans();
+        } else showToast("خطا", data.error, "error");
+      }
+
+      // ======================================================================
+      // OPS
+      // ======================================================================
+      async function loadOps() {
+        try {
+          const data = await API.get("/api/oplist");
+          if (!data.success) {
+            showToast("خطا", data.error, "error");
+            return;
+          }
+          document.getElementById("opCount").textContent = data.total ?? 0;
+          const tbody = document.getElementById("opsTableBody");
+          if (data.operators && data.operators.length > 0) {
+            tbody.innerHTML = data.operators
+              .map(
+                (p) => `
+        <tr>
+          <td><strong>${escapeHtml(p)}</strong></td>
+          <td><button class="btn btn-danger btn-sm" onclick="deopPlayer('${escapeHtml(p)}')">⭐ Deop</button></td>
+        </tr>
+      `,
+              )
+              .join("");
+          } else {
+            tbody.innerHTML =
+              '<tr><td colspan="2" class="text-center text-muted">هیچ اپراتوری وجود ندارد</td></tr>';
+          }
+        } catch (e) {
+          showToast("خطا", "خطا در دریافت لیست اپراتورها", "error");
+        }
+      }
+
+      async function addOp() {
+        const player = document.getElementById("opAddInput").value.trim();
+        if (!player) {
+          showToast("خطا", "نام بازیکن را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/op", { player });
+        if (data.success) {
+          showToast("⭐ اپراتور", `${player} اپراتور شد`, "success");
+          document.getElementById("opAddInput").value = "";
+          loadOps();
+        } else showToast("خطا", data.error, "error");
+      }
+
+      async function deopPlayer(player) {
+        const data = await API.post("/api/deop", { player });
+        if (data.success) {
+          showToast("⭐ Deop", `${player} از اپراتوری حذف شد`, "info");
+          loadOps();
+        } else showToast("خطا", data.error, "error");
+      }
+
+      // ======================================================================
+      // SERVER ACTIONS
+      // ======================================================================
+      async function changeDifficulty() {
+        const difficulty = document.getElementById("difficultySelect").value;
+        const data = await API.post("/api/difficulty", { difficulty });
+        if (data.success)
+          showToast("⚔️ Difficulty", `به ${difficulty} تغییر کرد`, "success");
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function changeGamemode() {
+        const player = document.getElementById("gmPlayer").value.trim();
+        const gamemode = document.getElementById("gmSelect").value;
+        if (!player) {
+          showToast("خطا", "نام بازیکن را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/gamemode", { player, gamemode });
+        if (data.success)
+          showToast(
+            "🎮 GameMode",
+            `گیم‌مود ${player} به ${gamemode} تغییر کرد`,
+            "success",
+          );
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function changeDefaultGamemode() {
+        const gamemode = document.getElementById("defaultGmSelect").value;
+        const data = await API.post("/api/command", {
+          command: `defaultgamemode ${gamemode}`,
+        });
+        if (data.success)
+          showToast(
+            "🎮 GameMode",
+            `گیم‌مود پیش‌فرض به ${gamemode} تغییر کرد`,
+            "success",
+          );
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function saveAll() {
+        const data = await API.post("/api/save-all");
+        if (data.success) showToast("💾 ذخیره", "جهان ذخیره شد", "success");
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function restartServer() {
+        openModal(
+          "🔁 ریستارت سرور",
+          "آیا مطمئن هستید؟ سرور ریستارت خواهد شد.",
+          async () => {
+            const data = await API.post("/api/restart");
+            if (data.success)
+              showToast("🔁 ریستارت", "سرور در حال ریستارت...", "warning");
+            else showToast("خطا", data.error, "error");
+          },
+        );
+      }
+
+      // ======================================================================
+      // WORLD & WEATHER
+      // ======================================================================
+      async function setWeather(weather) {
+        const data = await API.post("/api/weather", { weather });
+        if (data.success)
+          showToast(
+            "🌤️ آب و هوا",
+            `آب و هوا به ${weather} تغییر کرد`,
+            "success",
+          );
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function setTime(time) {
+        const data = await API.post("/api/time", { time });
+        if (data.success)
+          showToast("🕐 زمان", `زمان به ${time} تنظیم شد`, "success");
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function setWorldSpawn() {
+        const data = await API.post("/api/setworldspawn");
+        if (data.success)
+          showToast("📍 اسپاون", "موقعیت اسپاون جهان تنظیم شد", "success");
+        else showToast("خطا", data.error, "error");
+      }
+
+      // ======================================================================
+      // PLAYER ACTIONS
+      // ======================================================================
+      async function kickPlayer() {
+        const player = document.getElementById("kickPlayer").value.trim();
+        const reason = document.getElementById("kickReason").value.trim();
+        if (!player) {
+          showToast("خطا", "نام بازیکن را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/kick", { player, reason });
+        if (data.success) {
+          showToast("🥾 Kick", `${player} از سرور کیک شد`, "warning");
+          document.getElementById("kickPlayer").value = "";
+          document.getElementById("kickReason").value = "";
+        } else showToast("خطا", data.error, "error");
+      }
+
+      async function giveItem() {
+        const player = document.getElementById("givePlayer").value.trim();
+        const item = document.getElementById("giveItem").value.trim();
+        const amount =
+          parseInt(document.getElementById("giveAmount").value) || 1;
+        if (!player || !item) {
+          showToast("خطا", "نام بازیکن و آیتم را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/give", { player, item, amount });
+        if (data.success)
+          showToast(
+            "🎁 Give",
+            `${amount}x ${item} به ${player} داده شد`,
+            "success",
+          );
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function teleportPlayer() {
+        const target = document.getElementById("tpPlayer").value.trim();
+        const x = parseFloat(document.getElementById("tpX").value);
+        const y = parseFloat(document.getElementById("tpY").value);
+        const z = parseFloat(document.getElementById("tpZ").value);
+        if (!target || isNaN(x) || isNaN(y) || isNaN(z)) {
+          showToast("خطا", "تمامی فیلدها را پر کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/tp", { target, x, y, z });
+        if (data.success)
+          showToast(
+            "📍 Teleport",
+            `${target} به ${x} ${y} ${z} تلپورت شد`,
+            "success",
+          );
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function giveEffect() {
+        const player = document.getElementById("effectPlayer").value.trim();
+        const effect = document.getElementById("effectType").value;
+        const duration =
+          parseInt(document.getElementById("effectDuration").value) || 30;
+        const amplifier =
+          parseInt(document.getElementById("effectAmplifier").value) || 1;
+        if (!player) {
+          showToast("خطا", "نام بازیکن را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/effect", {
+          player,
+          effect,
+          duration,
+          amplifier,
+        });
+        if (data.success)
+          showToast(
+            "✨ Effect",
+            `اثر ${effect} به ${player} اعمال شد`,
+            "success",
+          );
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function enchantItem() {
+        const player = document.getElementById("enchantPlayer").value.trim();
+        const enchantment = document.getElementById("enchantType").value;
+        const level =
+          parseInt(document.getElementById("enchantLevel").value) || 1;
+        if (!player) {
+          showToast("خطا", "نام بازیکن را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/enchant", {
+          player,
+          enchantment,
+          level,
+        });
+        if (data.success)
+          showToast(
+            "🔮 Enchant",
+            `Enchant ${enchantment} سطح ${level} به ${player} اعمال شد`,
+            "success",
+          );
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function giveXp() {
+        const player = document.getElementById("xpPlayer").value.trim();
+        const amount =
+          parseInt(document.getElementById("xpAmount").value) || 100;
+        if (!player) {
+          showToast("خطا", "نام بازیکن را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/xp", { player, amount });
+        if (data.success)
+          showToast("📈 XP", `${amount} XP به ${player} داده شد`, "success");
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function clearInventory() {
+        const player = document.getElementById("clearPlayer").value.trim();
+        if (!player) {
+          showToast("خطا", "نام بازیکن را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/clear", { player });
+        if (data.success)
+          showToast("🧹 Clear", `اینتوری ${player} پاک شد`, "success");
+        else showToast("خطا", data.error, "error");
+      }
+
+      async function killEntity() {
+        const target = document.getElementById("killTarget").value.trim();
+        if (!target) {
+          showToast("خطا", "هدف را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/kill", { target });
+        if (data.success) showToast("💀 Kill", `${target} کشته شد`, "warning");
+        else showToast("خطا", data.error, "error");
+      }
+
+      // ======================================================================
+      // ITEM BROWSER
+      // ======================================================================
+      async function initItemsDatabase() {
+        try {
+          const data = await API.get("/api/items");
+          if (data.success) {
+            itemsDatabase = data.items;
+            renderItemsCategories();
+            renderItemsCategoryItems(Object.keys(data.items)[0]);
+          }
+        } catch (e) {
+          showToast("خطا", "خطا در بارگذاری آیتم‌ها", "error");
+        }
+      }
+
+      function renderItemsCategories() {
+        if (!itemsDatabase) return;
+        const container = document.getElementById("itemsCategories");
+        container.innerHTML = Object.entries(itemsDatabase)
+          .map(
+            ([key, cat]) =>
+              `<button class="item-cat-btn" onclick="renderItemsCategoryItems('${key}')">${cat.icon || "📦"} ${cat.name}</button>`,
+          )
+          .join("");
+      }
+
+      function renderItemsCategoryItems(categoryKey) {
+        if (!itemsDatabase || !itemsDatabase[categoryKey]) return;
+        const grid = document.getElementById("itemsGrid");
+        const items = itemsDatabase[categoryKey].items;
+        grid.innerHTML = items
+          .map(
+            (item) =>
+              `<button class="item-btn" onclick="selectItemFromBrowser('${escapeHtml(item.id)}', '${escapeHtml(item.name)}')">
+      📦 <span class="item-name">${escapeHtml(item.name)}</span>
+    </button>`,
+          )
+          .join("");
+      }
+
+      function searchItemsFrontend() {
+        const q = document
+          .getElementById("itemsSearchInput")
+          .value.toLowerCase()
+          .trim();
+        const container = document.getElementById("itemsSearchResults");
+        if (!q || q.length < 1) {
+          container.innerHTML = "";
+          return;
+        }
+        if (!itemsDatabase) return;
+
+        const results = [];
+        for (const [catKey, category] of Object.entries(itemsDatabase)) {
+          for (const item of category.items) {
+            if (
+              item.name.toLowerCase().includes(q) ||
+              item.id.toLowerCase().includes(q)
+            ) {
+              results.push({ ...item, categoryName: category.name });
+            }
+          }
+        }
+
+        if (results.length === 0) {
+          container.innerHTML =
+            '<div class="text-muted text-center" style="grid-column:1/-1;padding:20px">نتیجه‌ای یافت نشد</div>';
+          return;
+        }
+
+        container.innerHTML = results
+          .slice(0, 30)
+          .map(
+            (item) =>
+              `<button class="item-btn" onclick="selectItem('${escapeHtml(item.id)}')">
+      📦 <span class="item-name">${escapeHtml(item.name)}</span>
+    </button>`,
+          )
+          .join("");
+      }
+
+      function selectItem(itemId) {
+        document.getElementById("giveItem").value = itemId;
+        document.getElementById("itemsGivePlayer").value =
+          document.getElementById("itemsGivePlayer").value ||
+          document.getElementById("givePlayer").value;
+        const amount = document.getElementById("itemsGiveAmount").value || 1;
+        document.getElementById("giveAmount").value = amount;
+        showToast("✅ انتخاب", `آیتم ${itemId} انتخاب شد`, "success");
+      }
+
+      async function giveItemFromBrowser() {
+        const player =
+          document.getElementById("itemsGivePlayer").value.trim() ||
+          document.getElementById("givePlayer").value.trim();
+        const item = document.getElementById("giveItem").value.trim();
+        const amount =
+          parseInt(document.getElementById("itemsGiveAmount").value) || 1;
+        if (!player || !item) {
+          showToast("خطا", "نام بازیکن و آیتم را انتخاب کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/give", { player, item, amount });
+        if (data.success)
+          showToast(
+            "🎁 Give",
+            `${amount}x ${item} به ${player} داده شد`,
+            "success",
+          );
+        else showToast("خطا", data.error, "error");
+      }
+
+      // ======================================================================
+      // ITEM BROWSER MODAL (for give tab)
+      // ======================================================================
+      function openItemBrowser() {
+        document.getElementById("itemBrowser").classList.add("open");
+        renderItemBrowserCategories();
+        if (itemsDatabase) {
+          const keys = Object.keys(itemsDatabase);
+          if (keys.length > 0) renderItemBrowserItems(keys[0]);
+        } else {
+          initItemBrowserDb();
+        }
+      }
+
+      function closeItemBrowser() {
+        document.getElementById("itemBrowser").classList.remove("open");
+      }
+
+      async function initItemBrowserDb() {
+        if (!itemsDatabase) await initItemsDatabase();
+        renderItemBrowserCategories();
+        if (itemsDatabase) {
+          const keys = Object.keys(itemsDatabase);
+          if (keys.length > 0) renderItemBrowserItems(keys[0]);
+        }
+      }
+
+      function renderItemBrowserCategories() {
+        if (!itemsDatabase) return;
+        const container = document.getElementById("itemBrowserCategories");
+        container.innerHTML = Object.entries(itemsDatabase)
+          .map(
+            ([key, cat]) =>
+              `<button class="item-cat-btn" onclick="renderItemBrowserItems('${key}')">${cat.icon || "📦"} ${cat.name}</button>`,
+          )
+          .join("");
+      }
+
+      function renderItemBrowserItems(categoryKey) {
+        if (!itemsDatabase || !itemsDatabase[categoryKey]) return;
+        const grid = document.getElementById("itemBrowserGrid");
+        const items = itemsDatabase[categoryKey].items;
+        grid.innerHTML = items
+          .map(
+            (item) =>
+              `<button class="item-btn" onclick="selectItemBrowserItem('${escapeHtml(item.id)}', '${escapeHtml(item.name)}')">
+      📦 <span class="item-name">${escapeHtml(item.name)}</span>
+    </button>`,
+          )
+          .join("");
+      }
+
+      function searchItemBrowser() {
+        const q = document
+          .getElementById("itemBrowserSearch")
+          .value.toLowerCase()
+          .trim();
+        const grid = document.getElementById("itemBrowserGrid");
+        if (!q || q.length < 1) {
+          if (itemsDatabase) {
+            const keys = Object.keys(itemsDatabase);
+            if (keys.length > 0) renderItemBrowserItems(keys[0]);
+          }
+          return;
+        }
+        if (!itemsDatabase) return;
+
+        const results = [];
+        for (const [catKey, category] of Object.entries(itemsDatabase)) {
+          for (const item of category.items) {
+            if (
+              item.name.toLowerCase().includes(q) ||
+              item.id.toLowerCase().includes(q)
+            ) {
+              results.push(item);
+            }
+          }
+        }
+
+        grid.innerHTML = results
+          .slice(0, 50)
+          .map(
+            (item) =>
+              `<button class="item-btn" onclick="selectItemBrowserItem('${escapeHtml(item.id)}', '${escapeHtml(item.name)}')">
+      📦 <span class="item-name">${escapeHtml(item.name)}</span>
+    </button>`,
+          )
+          .join("");
+      }
+
+      function selectItemBrowserItem(itemId, itemName) {
+        document.getElementById("giveItem").value = itemId;
+        closeItemBrowser();
+        showToast("✅ انتخاب", `آیتم ${itemName} انتخاب شد`, "success");
+      }
+
+      // ======================================================================
+      // INVENTORY VIEWER
+      // ======================================================================
+      async function loadPlayerInventory() {
+        const name = document.getElementById("invPlayerSelect").value;
+        if (!name) {
+          showToast("خطا", "یک بازیکن را انتخاب کنید", "error");
+          return;
+        }
+        document.getElementById("invPlayerManual").value = name;
+        await doLoadInventory(name);
+      }
+
+      async function loadPlayerInventoryManual() {
+        const name = document.getElementById("invPlayerManual").value.trim();
+        if (!name) {
+          showToast("خطا", "نام بازیکن را وارد کنید", "error");
+          return;
+        }
+        document.getElementById("invPlayerSelect").value = name;
+        await doLoadInventory(name);
+      }
+
+      async function doLoadInventory(playerName) {
+        const display = document.getElementById("inventoryDisplay");
+        display.innerHTML = '<div class="spinner"></div>';
+
+        try {
+          const invData = await API.get(
+            `/api/player/${encodeURIComponent(playerName)}/inventory`,
+          );
+          if (!invData.success) {
+            display.innerHTML = `<div class="text-center text-muted" style="padding:30px">❌ خطا: ${escapeHtml(invData.error)}<br><br>
+        <span style="font-size:0.8rem">توجه: این قابلیت فقط برای بازیکنان آنلاین کار می‌کند.</span></div>`;
+            return;
+          }
+
+          const items = invData.items || [];
+
+          // Sort items into categories
+          const hotbar = items.filter((i) => i.slot >= 0 && i.slot < 9);
+          const mainInv = items.filter((i) => i.slot >= 9 && i.slot < 36);
+          const armor = items.filter((i) => i.slot >= 100 && i.slot <= 103);
+          const offhand = items.filter((i) => i.slot === -106 || i.slot === 40);
+          const crafting = items.filter((i) => i.slot >= 80 && i.slot < 84);
+
+          // Build inventory grid (36 slots: 0-8 hotbar, 9-35 main)
+          const gridSlots = [];
+          for (let i = 0; i < 36; i++) {
+            const found = items.find((it) => it.slot === i);
+            gridSlots.push(found || null);
+          }
+
+          // Armor slots: 100=feet, 101=legs, 102=chest, 103=head
+          const armorSlots = [103, 102, 101, 100].map(
+            (slot) => items.find((it) => it.slot === slot) || null,
+          );
+          const offhandSlot =
+            items.find((it) => it.slot === -106 || it.slot === 40) || null;
+
+          let html = `<div class="card">
+      <div class="card-header"><h3>🎒 انباری ${escapeHtml(playerName)} (${invData.total || 0} آیتم)</h3></div>`;
+
+          // Armor row
+          html += `<div class="mb-10"><strong style="font-size:0.8rem;color:var(--gold)">🛡️ زره</strong>
+      <div style="display:flex;gap:4px;margin-top:4px">`;
+          const armorNames = ["سر", "سینه", "پا", "پا"];
+          armorSlots.forEach((item, idx) => {
+            html += `<div class="inv-slot armor" style="width:60px;height:60px">
+        ${
+          item
+            ? `<span class="slot-count">${item.count}x</span><span class="slot-id">${escapeHtml(item.id.replace("minecraft:", ""))}</span>`
+            : `<span class="text-muted" style="font-size:1.5rem;opacity:0.3">${["⛑️", "🦺", "👖", "👢"][idx]}</span>`
+        }
+      </div>`;
+          });
+          html += `</div></div>`;
+
+          // Offhand
+          html += `<div class="mb-10"><strong style="font-size:0.8rem;color:var(--purple)">✋ دست دوم</strong>
+      <div style="display:flex;gap:4px;margin-top:4px">`;
+          html += `<div class="inv-slot offhand" style="width:60px;height:60px">
+      ${
+        offhandSlot
+          ? `<span class="slot-count">${offhandSlot.count}x</span><span class="slot-id">${escapeHtml(offhandSlot.id.replace("minecraft:", ""))}</span>`
+          : `<span class="text-muted" style="font-size:1.5rem;opacity:0.3">✋</span>`
+      }
+    </div>`;
+          html += `</div></div>`;
+
+          // Main inventory grid (hotbar + main)
+          html += `<div class="mb-10"><strong style="font-size:0.8rem;color:var(--primary)">📦 آیتم‌ها</strong>
+      <div class="inv-grid" style="margin-top:4px">`;
+
+          gridSlots.forEach((item, idx) => {
+            const isHotbar = idx < 9;
+            html += `<div class="inv-slot ${isHotbar ? "hotbar" : ""}">
+        ${
+          item
+            ? `<span class="slot-count">${item.count}x</span><span class="slot-id">${escapeHtml(item.id.replace("minecraft:", ""))}</span>`
+            : `<span class="text-muted" style="font-size:0.6rem;opacity:0.2">${idx}</span>`
+        }
+      </div>`;
+          });
+
+          html += `</div></div>`;
+
+          // Extra items (crafting, etc)
+          if (crafting.length > 0) {
+            html += `<div class="mb-10"><strong style="font-size:0.8rem;color:var(--info)">🔧 کرافت</strong>
+        <div style="display:flex;gap:4px;margin-top:4px">`;
+            crafting.forEach((item) => {
+              html += `<div class="inv-slot" style="width:50px;height:50px">
+          <span class="slot-count">${item.count}x</span>
+          <span class="slot-id">${escapeHtml(item.id.replace("minecraft:", ""))}</span>
+        </div>`;
+            });
+            html += `</div></div>`;
+          }
+
+          // Raw data
+          html += `<details style="margin-top:10px">
+      <summary style="cursor:pointer;font-size:0.75rem;color:var(--text2)">📄 داده خام</summary>
+      <pre style="font-size:0.65rem;color:var(--text2);max-height:200px;overflow:auto;direction:ltr;text-align:left;background:#000;padding:8px;border-radius:4px;margin-top:4px">${escapeHtml(invData.raw || "N/A")}</pre>
+    </details>`;
+
+          html += `</div>`;
+          display.innerHTML = html;
+        } catch (e) {
+          display.innerHTML = `<div class="text-center text-muted" style="padding:30px">❌ خطا: ${escapeHtml(e.message)}</div>`;
+        }
+      }
+
+      // ======================================================================
+      // GAMERULES
+      // ======================================================================
+      async function loadGamerules() {
+        const container = document.getElementById("gamerulesContainer");
+        container.innerHTML = '<div class="spinner"></div>';
+        try {
+          const data = await API.get("/api/gamerules");
+          if (!data.success || !data.rules) {
+            container.innerHTML =
+              '<div class="text-muted text-center">خطا در دریافت gamerules</div>';
+            return;
+          }
+          const rules = data.rules;
+          let html = '<div class="gr-grid">';
+          for (const [rule, value] of Object.entries(rules)) {
+            html += `<div class="gr-item">
+        <span class="gr-name">${escapeHtml(rule)}</span>
+        <span class="gr-value">${escapeHtml(value)}</span>
+      </div>`;
+          }
+          html += "</div>";
+          container.innerHTML = html;
+        } catch (e) {
+          container.innerHTML =
+            '<div class="text-muted text-center">خطا در دریافت gamerules</div>';
+        }
+      }
+
+      // ======================================================================
+      // BROADCAST
+      // ======================================================================
+      async function sayMessage() {
+        const message = document.getElementById("sayMessage").value.trim();
+        if (!message) {
+          showToast("خطا", "متن پیام را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/say", { message });
+        if (data.success) {
+          showToast("📢 پیام", "پیام ارسال شد", "success");
+          document.getElementById("sayMessage").value = "";
+        } else showToast("خطا", data.error, "error");
+      }
+
+      async function sendTitle() {
+        const title = document.getElementById("titleText").value.trim();
+        const subtitle = document.getElementById("subtitleText").value.trim();
+        if (!title) {
+          showToast("خطا", "متن title را وارد کنید", "error");
+          return;
+        }
+        const data = await API.post("/api/title", { title, subtitle });
+        if (data.success)
+          showToast("🎬 Title", "Title برای همه ارسال شد", "success");
+        else showToast("خطا", data.error, "error");
+      }
+
+      // ======================================================================
+      // CONSOLE
+      // ======================================================================
+      async function runConsoleCommand() {
+        const command = document.getElementById("consoleCommand").value.trim();
+        if (!command) {
+          showToast("خطا", "دستور را وارد کنید", "error");
+          return;
+        }
+        const output = document.getElementById("consoleOutput");
+        output.innerHTML += `<div class="console-line info">$ ${escapeHtml(command)}</div>`;
+        const data = await API.post("/api/command", { command });
+        if (data.success) {
+          output.innerHTML += `<div class="console-line success">${escapeHtml(data.message || "✅ دستور اجرا شد")}</div>`;
+        } else {
+          output.innerHTML += `<div class="console-line error">✗ ${escapeHtml(data.error || "خطا")}</div>`;
+        }
+        output.scrollTop = output.scrollHeight;
+        document.getElementById("consoleCommand").value = "";
+      }
+
+      function clearConsole() {
+        document.getElementById("consoleOutput").innerHTML =
+          '<div class="console-line info">▶️ کنسول پاک شد.</div>';
+      }
+
+      // ======================================================================
+      // INFO
+      // ======================================================================
+      async function loadInfo() {
+        try {
+          const dashboard = await API.get("/api/dashboard");
+          const version = await API.get("/api/version");
+          const seed = await API.get("/api/seed");
+          const settings = await API.get("/api/settings");
+          const banlist = await API.get("/api/banlist");
+          const oplist = await API.get("/api/oplist");
+
+          document.getElementById("infoVersion").textContent = version.success
+            ? version.version.substring(0, 100)
+            : "--";
+          document.getElementById("infoSeed").textContent = seed.success
+            ? seed.seed.substring(0, 60)
+            : "--";
+          document.getElementById("infoDifficulty").textContent =
+            dashboard.success ? dashboard.difficulty : "--";
+          document.getElementById("infoGamemode").textContent = settings.success
+            ? settings.gameMode
+            : "--";
+          document.getElementById("infoTps").textContent = dashboard.success
+            ? dashboard.tps
+              ? dashboard.tps.substring(0, 80)
+              : "--"
+            : "--";
+          document.getElementById("infoMaxPlayers").textContent =
+            dashboard.success ? dashboard.maxPlayers : "--";
+          document.getElementById("infoBans").textContent = banlist.success
+            ? banlist.total
+            : "--";
+          document.getElementById("infoOps").textContent = oplist.success
+            ? oplist.total
+            : "--";
+        } catch (e) {
+          showToast("خطا", "خطا در دریافت اطلاعات", "error");
+        }
+      }
+
+      // ======================================================================
+      // SERVER CONFIG (name, discord, icon, etc.)
+      // ======================================================================
+      async function loadServerConfig() {
+        try {
+          const data = await API.get("/api/server-config");
+          if (data.success && data.config) {
+            const cfg = data.config;
+            document.getElementById("configServerName").value = cfg.name || "";
+            document.getElementById("configDescription").value =
+              cfg.description || "";
+            document.getElementById("configDiscord").value = cfg.discord || "";
+            document.getElementById("configMotd").value = cfg.motd || "";
+            if (cfg.icon) {
+              const previewWrap = document.getElementById("iconPreviewWrap");
+              previewWrap.style.display = "block";
+              document.getElementById("iconPreview").src = cfg.icon;
+            } else {
+              document.getElementById("iconPreviewWrap").style.display = "none";
+            }
+            // Update header
+            if (cfg.name) {
+              document.querySelector(".header h1").textContent = cfg.name;
+            }
+            document.title = cfg.name
+              ? `${cfg.name} - کنترل پنل`
+              : "🎮 Minecraft Server Panel";
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      }
+
+      async function saveServerConfig() {
+        const name = document.getElementById("configServerName").value.trim();
+        const description = document
+          .getElementById("configDescription")
+          .value.trim();
+        const discord = document.getElementById("configDiscord").value.trim();
+        const motd = document.getElementById("configMotd").value.trim();
+
+        const data = await API.post("/api/server-config", {
+          name,
+          description,
+          discord,
+          motd,
+        });
+        if (data.success) {
+          showToast("✅ تنظیمات", "تنظیمات پنل ذخیره شد", "success");
+          // Update header
+          if (name) {
+            document.querySelector(".header h1").textContent = name;
+            document.title = `${name} - کنترل پنل`;
+          }
+          loadServerConfig();
+        } else {
+          showToast("خطا", data.error || "خطا در ذخیره", "error");
+        }
+      }
+
+      function previewServerIcon(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async function (e) {
+          const base64 = e.target.result;
+          // Show preview
+          document.getElementById("iconPreviewWrap").style.display = "block";
+          document.getElementById("iconPreview").src = base64;
+          // Upload to server
+          const data = await API.post("/api/server-icon", { icon: base64 });
+          if (data.success) {
+            showToast("✅ آیکون", "آیکون سرور ذخیره شد", "success");
+            loadServerConfig();
+          } else {
+            showToast("خطا", data.error || "خطا در ذخیره آیکون", "error");
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      async function clearServerIcon() {
+        const data = await API.post("/api/server-icon", { icon: "" });
+        if (data.success) {
+          document.getElementById("iconPreviewWrap").style.display = "none";
+          showToast("🗑️ آیکون", "آیکون حذف شد", "info");
+          loadServerConfig();
+        } else {
+          showToast("خطا", data.error, "error");
+        }
+      }
+
+      // ======================================================================
+      // INIT
+      // ======================================================================
+      loadDashboard();
+      loadPlayersDetailed();
+      loadWhitelist();
+      loadBans();
+      loadOps();
+      loadInfo();
+      loadGamerules();
+      loadServerConfig();
+      initItemsDatabase();
+      startAutoRefresh();
+    </script>
+  </body>
+</html>

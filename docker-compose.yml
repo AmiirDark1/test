@@ -1,0 +1,63 @@
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    container_name: minecraft
+    restart: unless-stopped
+    ports:
+      - "25565:25565"
+      - "25575:25575"
+    environment:
+      EULA: "TRUE"
+      TYPE: "PAPER"
+      VERSION: "1.21.4"
+      ONLINE_MODE: "FALSE"
+      MEMORY: "2G"
+      CREATE_CONSOLE_IN_PIPE: "true"
+      ENABLE_RCON: "true"
+      RCON_PORT: 25575
+      RCON_PASSWORD: "minecraft"
+      SEED: "-1234567890"
+      DIFFICULTY: "easy"
+      MAX_PLAYERS: 20
+      SPAWN_PROTECTION: 0
+      WHITELIST: ""
+      OPS: ""
+      ALLOW_NETHER: "true"
+      ANNOUNCE_PLAYER_ACHIEVEMENTS: "true"
+      VIEW_DISTANCE: 10
+      MODE: "survival"
+      MOTD: "{\"text\":\"§6§lMinecraft §f§lServer §7- §aMy Server\",\"color\":\"gold\",\"bold\":true}"
+      GENERATE_STRUCTURES: "true"
+      PVP: "true"
+      HARDCORE: "false"
+      ENFORCE_WHITELIST: "false"
+      LEVEL_TYPE: "default"
+      TPS : "20"
+      ENABLE_QUERY: "true"
+      QUERY_PORT: 25565
+    volumes:
+      - ./data:/data
+    mem_limit: 2g
+    mem_reservation: 1g
+    cpus: 1
+    cpuset: "0"
+
+  mc-panel:
+    build: ./mc-panel
+    container_name: mc-admin-panel
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      SERVER_PORT: 3000
+      RCON_HOST: minecraft
+      RCON_PORT: 25575
+      RCON_PASSWORD: "minecraft"
+      DATA_PATH: "/data"
+    volumes:
+      - ./data:/data
+    depends_on:
+      - minecraft
+    mem_limit: 256m
+    mem_reservation: 128m
+    cpus: 0.5
