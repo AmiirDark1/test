@@ -11,6 +11,7 @@ set -e
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 MAGENTA='\033[0;35m'
 BOLD='\033[1m'
@@ -284,8 +285,13 @@ system_info() {
     echo -e "\n${BOLD}${CYAN}📊 System Info${NC}"
     [ -d "data" ] && echo -e "  💾 Data size: $(du -sh data 2>/dev/null | cut -f1)"
     echo -e "  🐳 Docker:" && docker system df 2>/dev/null | head -3
-    echo -e "\n${CYAN}  Containers:${NC}"
-    docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}" 2>/dev/null
+    echo -e "\n${CYAN}  Minecraft Containers:${NC}"
+    docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}" 2>/dev/null | head -1
+    for c in minecraft mc-admin-panel; do
+        if docker ps --format '{{.Names}}' 2>/dev/null | grep -q "^$c$"; then
+            docker stats --no-stream --format "{{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}" $c 2>/dev/null
+        fi
+    done
     echo -e "\n${YELLOW}Press Enter...${NC}" && read -r
 }
 
@@ -304,6 +310,7 @@ while true; do
     echo -e "  ${GREEN}5)${NC} 💬 RCON Console"
     echo -e "  ${CYAN}6)${NC} 📊 System info"
     echo -e "  ${MAGENTA}7)${NC} 🏗️  Rebuild & restart"
+    echo -e "  ${BLUE}9)${NC} 🚀 Deploy (git pull + rebuild)"
     echo -e "  ${RED}8)${NC} ☠  Delete server"
     echo -e "  ${BOLD}0)${NC} 🚪 Exit"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -324,6 +331,18 @@ while true; do
             echo -e "${GREEN}  ✅ Done${NC}" && echo -e "\n${YELLOW}Press Enter...${NC}" && read -r
             ;;
         8) delete_server ;;
+        9)
+            if [ -f "deploy.sh" ]; then
+                bash deploy.sh
+            else
+                echo -e "\n${YELLOW}🚀 Deploying...${NC}"
+                git pull origin $(git rev-parse --abbrev-ref HEAD) 2>/dev/null || echo -e "${YELLOW}  ⚠ Git pull failed, skipping${NC}"
+                docker compose build --no-cache 2>/dev/null || true
+                docker compose up -d --force-recreate 2>/dev/null
+                echo -e "${GREEN}  ✅ Deploy complete${NC}"
+            fi
+            echo -e "\n${YELLOW}Press Enter...${NC}" && read -r
+            ;;
         0) echo -e "\n${GREEN}👋${NC}" && exit 0 ;;
         *) echo -e "\n${RED}❌ Invalid${NC}" && sleep 1 ;;
     esac

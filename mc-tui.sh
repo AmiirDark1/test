@@ -307,8 +307,13 @@ system_info() {
     docker system df 2>/dev/null | head -5
     
     # Container resource usage
-    echo -e "\n${CYAN}  Container Resource Usage:${NC}"
-    docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}" 2>/dev/null || echo -e "${YELLOW}  No running containers${NC}"
+    echo -e "\n${CYAN}  Minecraft Containers:${NC}"
+    docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}" 2>/dev/null | head -1
+    for c in minecraft mc-admin-panel; do
+        if docker ps --format '{{.Names}}' 2>/dev/null | grep -q "^$c$"; then
+            docker stats --no-stream --format "{{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}" $c 2>/dev/null
+        fi
+    done
     
     # Port usage
     echo -e "\n${CYAN}  Port Check:${NC}"
