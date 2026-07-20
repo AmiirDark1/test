@@ -1166,6 +1166,25 @@ app.get('/api/banlist', async (req, res) => {
 function parseBanlist(raw) {
   const result = { total: 0, players: [] };
   if (!raw) return result;
+  
+  // Try to extract total from "There are X banned players:"
+  const totalMatch = raw.match(/There are (\d+) banned players/i);
+  if (totalMatch) {
+    result.total = parseInt(totalMatch[1]) || 0;
+  }
+  
+  // Handle modern Paper format with "- " prefix on each line:
+  // There are 1 banned players:
+  // - PlayerName
+  const dashLines = raw.match(/^-\s+(.+)$/gm);
+  if (dashLines && dashLines.length > 0) {
+    result.players = dashLines.map(line => line.replace(/^-\s+/, '').trim()).filter(p => p);
+    if (result.total === 0) result.total = result.players.length;
+    return result;
+  }
+  
+  // Handle old comma-separated format:
+  // There are 2 banned players: player1, player2
   const match = raw.match(/There are (\d+) banned players:\s*(.*)/i);
   if (match) {
     result.total = parseInt(match[1]) || 0;
