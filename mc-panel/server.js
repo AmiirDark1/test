@@ -1226,14 +1226,45 @@ app.post('/api/ban-ip', async (req, res) => {
 app.get('/api/banlist-ips', async (req, res) => {
   try {
     const raw = await withRcon((rcon) => rcon.send('banlist ips'));
-    const match = raw.match(/There are (\d+) banned IP addresses:\s*(.*)/i);
-    const total = match ? parseInt(match[1]) || 0 : 0;
-    const ips = match && match[2] ? match[2].split(',').map(i => i.trim()).filter(i => i) : [];
-    res.json({ success: true, total, ips, raw });
+    const result = parseIpBanlist(raw);
+    res.json({ success: true, ...result, raw });
   } catch (err) {
     res.json({ success: false, error: err.message });
   }
 });
+
+function parseIpBanlist(raw) {
+  const result = { total: 0, ips: [] };
+  if (!raw) return result;
+
+  // Extract total from "There are X banned IP addresses:"
+  const totalMatch = raw.match(/There are (\d+) banned IP addresses/i);
+  if (totalMatch) {
+    result.total = parseInt(totalMatch[1]) || 0;
+  }
+
+  // Handle modern Paper format with "- " prefix on each line:
+  // There are 1 banned IP addresses:
+  // - 192.168.1.1
+  const dashLines = raw.match(/^-\s+(.+)$/gm);
+  if (dashLines && dashLines.length > 0) {
+    result.ips = dashLines.map(line => line.replace(/^-\s+/, '').trim()).filter(i => i);
+    if (result.total === 0) result.total = result.ips.length;
+    return result;
+  }
+
+  // Handle old comma-separated format:
+  // There are 2 banned IP addresses: 192.168.1.1, 10.0.0.1
+  const match = raw.match(/There are (\d+) banned IP addresses:\s*(.*)/i);
+  if (match) {
+    result.total = parseInt(match[1]) || 0;
+    const ipsStr = match[2].trim();
+    if (ipsStr && ipsStr !== '') {
+      result.ips = ipsStr.split(',').map(i => i.trim()).filter(i => i);
+    }
+  }
+  return result;
+}
 
 // Pardon (unban)
 app.post('/api/pardon', async (req, res) => {
@@ -1263,17 +1294,52 @@ app.post('/api/pardon-ip', async (req, res) => {
 app.get('/api/oplist', async (req, res) => {
   try {
     const raw = await withRcon((rcon) => rcon.send('op list'));
-    const match = raw.match(/Operators \((\d+)\):\s*(.*)/i);
-    const total = match ? parseInt(match[1]) || 0 : 0;
-    const operators = match && match[2] ? match[2].split(',').map(o => {
-      const parts = o.trim().split(/\s+/);
-      return parts[0];
-    }).filter(o => o) : [];
-    res.json({ success: true, total, operators, raw });
+    const result = parseOpList(raw);
+    res.json({ success: true, ...result, raw });
   } catch (err) {
     res.json({ success: false, error: err.message });
   }
 });
+
+function parseOpList(raw) {
+  const result = { total: 0, operators: [] };
+  if (!raw) return result;
+
+  // Extract total from "Operators (X):"
+  const totalMatch = raw.match(/Operators \((\d+)\)/i);
+  if (totalMatch) {
+    result.total = parseInt(totalMatch[1]) || 0;
+  }
+
+  // Handle modern Paper format with "- " prefix on each line:
+  // Operators (2):
+  // - PlayerName (level 4) [by: Mojang]
+  // - Player2 (level 4) [by: Mojang]
+  const dashLines = raw.match(/^-\s+(.+)$/gm);
+  if (dashLines && dashLines.length > 0) {
+    result.operators = dashLines.map(line => {
+      const name = line.replace(/^-\s+/, '').trim().split(/\s+/)[0];
+      return name;
+    }).filter(p => p);
+    if (result.total === 0) result.total = result.operators.length;
+    return result;
+  }
+
+  // Handle old comma-separated format:
+  // Operators (2): PlayerName, Player2
+  const match = raw.match(/Operators \((\d+)\):\s*(.*)/i);
+  if (match) {
+    result.total = parseInt(match[1]) || 0;
+    const playersStr = match[2].trim();
+    if (playersStr && playersStr !== '') {
+      result.operators = playersStr.split(',').map(o => {
+        const parts = o.trim().split(/\s+/);
+        return parts[0];
+      }).filter(o => o);
+    }
+  }
+  return result;
+}
 
 // Op player
 app.post('/api/op', async (req, res) => {
@@ -1711,9 +1777,7 @@ app.get('/api/dashboard', async (req, res) => {
 
       const players = parsePlayerList(listRaw);
       const bans = parseBanlist(banlistRaw);
-
-      const opMatch = oplistRaw.match(/Operators \((\d+)\)/i);
-      const opCount = opMatch ? parseInt(opMatch[1]) || 0 : 0;
+      const ops = parseOpList(oplistRaw);
 
       return {
         playersOnline: players.online,
@@ -1723,7 +1787,7 @@ app.get('/api/dashboard', async (req, res) => {
         version: versionRaw,
         difficulty: difficultyRaw,
         bans: bans.total,
-        ops: opCount,
+        ops: ops.total,
       };
     });
     res.json({ success: true, ...data });
